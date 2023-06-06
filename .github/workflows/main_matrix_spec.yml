@@ -240,8 +240,8 @@ jobs:
         run: >-
           bin/bump_version.py
 
-      - name: Create version.properties pull request
-        uses: peter-evans/create-pull-request@v3
-        with:
-          add-paths: |
-            version.properties
+      # - name: Create version.properties pull request
+      #   uses: peter-evans/create-pull-request@v3
+      #   with:
+      #     add-paths: |
+      #       version.properties
