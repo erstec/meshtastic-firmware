@@ -242,6 +242,20 @@ class AnalogBatteryLevel : public HasBatteryLevel
     /// If we see a battery voltage higher than physics allows - assume charger is pumping
     /// in power
 
+#if defined(LIFEPO4)
+#ifndef BAT_FULLVOLT
+#define BAT_FULLVOLT 3650
+#endif
+#ifndef BAT_EMPTYVOLT
+#define BAT_EMPTYVOLT 2770
+#endif
+#ifndef BAT_CHARGINGVOLT
+#define BAT_CHARGINGVOLT 3700
+#endif
+#ifndef BAT_NOBATVOLT
+#define BAT_NOBATVOLT 1500
+#endif
+#else
 #ifndef BAT_FULLVOLT
 #define BAT_FULLVOLT 4200
 #endif
@@ -253,6 +267,7 @@ class AnalogBatteryLevel : public HasBatteryLevel
 #endif
 #ifndef BAT_NOBATVOLT
 #define BAT_NOBATVOLT 2230
+#endif
 #endif
 
     /// For heltecs with no battery connected, the measured voltage is 2204, so raising to 2230 from 2100

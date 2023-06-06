@@ -17,7 +17,7 @@
 #if defined(LIFEPO4)
 #define MIN_BAT_MILLIVOLTS 2750 // millivolts. 10% per https://blog.ampow.com/lipo-voltage-chart/
 
-#define BAT_MILLIVOLTS_FULL 3650
+#define BAT_MILLIVOLTS_FULL 3600
 #define BAT_MILLIVOLTS_EMPTY 2500
 #else
 #define MIN_BAT_MILLIVOLTS 3250 // millivolts. 10% per https://blog.ampow.com/lipo-voltage-chart/
