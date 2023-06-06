@@ -196,7 +196,9 @@ jobs:
 
   release-artifacts:
     runs-on: ubuntu-latest
-    if: ${{ github.event_name == 'workflow_dispatch' }}
+    if: |
+        ${{ github.event_name == 'workflow_dispatch' }} ||
+        ${{ github.event_name == 'push' && startsWith(github.ref, 'refs/tags/') }}
     needs: [gather-artifacts, after-checks]
     steps:
       - name: Checkout
