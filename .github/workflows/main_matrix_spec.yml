@@ -6,6 +6,8 @@ on:
     paths-ignore:
       - "**.md"
       - "version.properties"
+    tags:
+      - v*
 
   # Note: This is different from "pull_request". Need to specify ref when doing checkouts.
   pull_request_target:
