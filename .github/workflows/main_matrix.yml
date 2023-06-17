@@ -25,6 +25,8 @@ jobs:
           - board: rak11200
           - board: tlora-v2-1-1_6
           - board: tlora-v2-1-1_6_lifepo4
+          - board: tlora-v2-1-1_6-nooled
+          - board: tlora-v2-1-1_6_lifepo4-nooled
           - board: tbeam
           - board: tbeam_lifepo4
           - board: heltec-v2_1
@@ -62,6 +64,8 @@ jobs:
           - board: tlora_v1_3
           - board: tlora-v2-1-1_6
           - board: tlora-v2-1-1_6_lifepo4
+          - board: tlora-v2-1-1_6_nooled
+          - board: tlora-v2-1-1_6_lifepo4_nooled
           - board: tlora-v2-1-1_8
           - board: tbeam
           - board: tbeam_lifepo4
