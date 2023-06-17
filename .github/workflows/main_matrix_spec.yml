@@ -26,8 +26,8 @@ jobs:
         include:
           - board: tlora-v2-1-1_6
           - board: tlora-v2-1-1_6_lifepo4
-          - board: tlora-v2-1-1_6-nooled
-          - board: tlora-v2-1-1_6_lifepo4-nooled
+          - board: tlora-v2-1-1_6_nooled
+          - board: tlora-v2-1-1_6_lifepo4_nooled
           - board: tbeam
           - board: tbeam_lifepo4
     uses: ./.github/workflows/build_esp32_spec.yml
