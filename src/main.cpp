@@ -305,9 +305,7 @@ void setup()
     }
 #endif
 
-#define NO_OLED
-#ifndef NO_OLED
-aaa
+#ifndef NOOLED
     auto screenInfo = i2cScanner->firstScreen();
     screen_found = screenInfo.type != ScanI2C::DeviceType::NONE ? screenInfo.address : ScanI2C::ADDRESS_NONE;
 
