@@ -2,7 +2,7 @@ name: CI
 on:
   # # Triggers the workflow on push but only for the master branch
   push:
-    branches: [testing_branch]
+    branches: [testing_branch, disable-oled]
     paths-ignore:
       - "**.md"
       - "version.properties"
@@ -11,7 +11,7 @@ on:
 
   # Note: This is different from "pull_request". Need to specify ref when doing checkouts.
   pull_request_target:
-    branches: [testing_branch]
+    branches: [testing_branch, disable-oled]
     paths-ignore:
       - "**.md"
       #- "**.yml"
@@ -26,6 +26,8 @@ jobs:
         include:
           - board: tlora-v2-1-1_6
           - board: tlora-v2-1-1_6_lifepo4
+          - board: tlora-v2-1-1_6_nooled
+          - board: tlora-v2-1-1_6_lifepo4_nooled
           - board: tbeam
           - board: tbeam_lifepo4
     uses: ./.github/workflows/build_esp32_spec.yml
