@@ -33,6 +33,17 @@ jobs:
     uses: ./.github/workflows/build_esp32_spec.yml
     with:
       board: ${{ matrix.board }}
+  
+  build-nrf52:
+    strategy:
+      fail-fast: false
+      max-parallel: 2
+      matrix:
+        include:
+          - board: t-echo
+    uses: ./.github/workflows/build_nrf52_spec.yml
+    with:
+      board: ${{ matrix.board }}
 
   build-native:
     runs-on: ubuntu-latest
@@ -113,7 +124,7 @@ jobs:
         id: version
 
       - name: Move files up
-        run: mv -b -t ./ ./*tbeam-2*/littlefs*.bin ./*tbeam-2*/bleota.bin ./**/firmware*.bin ./**/*.elf ./*native*/*device-*.sh ./*native*/*device-*.bat
+        run: mv -b -t ./ ./*tbeam-2*/littlefs*.bin ./*tbeam-2*/bleota.bin ./**/firmware*.bin ./*t-echo*/Meshtastic_nRF52_factory_erase.uf2 ./**/firmware-*.uf2 ./**/firmware-*-ota.zip ./**/*.elf ./*native*/*device-*.sh ./*native*/*device-*.bat
 
       - name: Repackage in single firmware zip
         uses: actions/upload-artifact@v3
