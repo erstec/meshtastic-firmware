@@ -138,7 +138,7 @@ ProcessMessage RangeTestModuleRadio::handleReceived(const meshtastic_MeshPacket 
             }
 
             /*
-            NodeInfo *n = nodeDB.getNode(getFrom(&mp));
+            NodeInfoLite *n = nodeDB.getMeshNode(getFrom(&mp));
 
             LOG_DEBUG("-----------------------------------------\n");
             LOG_DEBUG("p.payload.bytes  \"%s\"\n", p.payload.bytes);
@@ -152,7 +152,6 @@ ProcessMessage RangeTestModuleRadio::handleReceived(const meshtastic_MeshPacket 
             LOG_DEBUG("---- Node Information of Received Packet (mp.from):\n");
             LOG_DEBUG("n->user.long_name         %s\n", n->user.long_name);
             LOG_DEBUG("n->user.short_name        %s\n", n->user.short_name);
-            LOG_DEBUG("n->user.macaddr           %X\n", n->user.macaddr);
             LOG_DEBUG("n->has_position           %d\n", n->has_position);
             LOG_DEBUG("n->position.latitude_i    %d\n", n->position.latitude_i);
             LOG_DEBUG("n->position.longitude_i   %d\n", n->position.longitude_i);
@@ -178,7 +177,7 @@ bool RangeTestModuleRadio::appendFile(const meshtastic_MeshPacket &mp)
 #ifdef ARCH_ESP32
     auto &p = mp.decoded;
 
-    meshtastic_NodeInfo *n = nodeDB.getNode(getFrom(&mp));
+    meshtastic_NodeInfoLite *n = nodeDB.getMeshNode(getFrom(&mp));
     /*
         LOG_DEBUG("-----------------------------------------\n");
         LOG_DEBUG("p.payload.bytes  \"%s\"\n", p.payload.bytes);
@@ -192,7 +191,6 @@ bool RangeTestModuleRadio::appendFile(const meshtastic_MeshPacket &mp)
         LOG_DEBUG("---- Node Information of Received Packet (mp.from):\n");
         LOG_DEBUG("n->user.long_name         %s\n", n->user.long_name);
         LOG_DEBUG("n->user.short_name        %s\n", n->user.short_name);
-        LOG_DEBUG("n->user.macaddr           %X\n", n->user.macaddr);
         LOG_DEBUG("n->has_position           %d\n", n->has_position);
         LOG_DEBUG("n->position.latitude_i    %d\n", n->position.latitude_i);
         LOG_DEBUG("n->position.longitude_i   %d\n", n->position.longitude_i);
