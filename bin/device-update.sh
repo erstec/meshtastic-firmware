@@ -45,7 +45,7 @@ shift "$((OPTIND-1))"
 
 if [ -f "${FILENAME}" ] && [ -z "${FILENAME##*"update"*}" ]; then
 	printf "Trying to flash update ${FILENAME}"
-	$PYTHON -m esptool --baud 115200 write_flash 0x10000 ${FILENAME}
+	$PYTHON -m esptool --baud 921600 write_flash 0x10000 ${FILENAME}
 else
 	show_help
 	echo "Invalid file: ${FILENAME}"

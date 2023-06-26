@@ -47,15 +47,15 @@ shift "$((OPTIND-1))"
 
 if [ -f "${FILENAME}" ] && [ ! -z "${FILENAME##*"update"*}" ]; then
 	echo "Trying to flash ${FILENAME}, but first erasing and writing system information"
-	"$PYTHON" -m esptool  erase_flash
-	"$PYTHON" -m esptool  write_flash 0x00 ${FILENAME}
+	"$PYTHON" -m esptool --baud 921600 erase_flash
+	"$PYTHON" -m esptool --baud 921600 write_flash 0x00 ${FILENAME}
 	# Account for S3 board's different OTA partition
 	if [ ! -z "${FILENAME##*"s3"*}" ] && [ ! -z "${FILENAME##*"-v3"*}" ]; then
-		"$PYTHON" -m esptool  write_flash 0x260000 bleota.bin
+		"$PYTHON" -m esptool --baud 921600 write_flash 0x260000 bleota.bin
 	else
-	    "$PYTHON" -m esptool  write_flash 0x260000 bleota-s3.bin
+	    "$PYTHON" -m esptool --baud 921600 write_flash 0x260000 bleota-s3.bin
 	fi
-	"$PYTHON" -m esptool  write_flash 0x300000 littlefs-*.bin
+	"$PYTHON" -m esptool --baud 921600 write_flash 0x300000 littlefs-*.bin
 
 else
 	show_help
