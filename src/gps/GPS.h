@@ -14,7 +14,7 @@ struct uBloxGnssModelInfo {
 typedef enum {
     GNSS_MODEL_MTK,
     GNSS_MODEL_UBLOX,
-    GNSS_MODEL_UNKONW,
+    GNSS_MODEL_UNKNOWN,
 } GnssModel_t;
 
 // Generate a string representation of DOP
@@ -139,6 +139,9 @@ class GPS : private concurrency::OSThread
     /// always returns 0 to indicate okay to sleep
     int prepareDeepSleep(void *unused);
 
+    // Calculate checksum
+    void UBXChecksum(byte *message, size_t length);
+
     /**
      * Switch the GPS into a mode where we are actively looking for a lock, or alternatively switch GPS into a low power mode
      *
@@ -172,7 +175,7 @@ class GPS : private concurrency::OSThread
     uint8_t fixeddelayCtr = 0;
 
   protected:
-    GnssModel_t gnssModel = GNSS_MODEL_UNKONW;
+    GnssModel_t gnssModel = GNSS_MODEL_UNKNOWN;
 };
 
 // Creates an instance of the GPS class.
