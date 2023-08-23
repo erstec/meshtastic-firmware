@@ -88,9 +88,9 @@ void NeighborInfoModule::printNodeDBSelection(const char *header, const meshtast
 
 /* Send our initial owner announcement 35 seconds after we start (to give network time to setup) */
 NeighborInfoModule::NeighborInfoModule()
-    : neighbors(neighborState.neighbors), numNeighbors(&neighborState.neighbors_count),
-      ProtobufModule("neighborinfo", meshtastic_PortNum_NEIGHBORINFO_APP, &meshtastic_NeighborInfo_msg), concurrency::OSThread(
-                                                                                                             "NeighborInfoModule")
+    : ProtobufModule("neighborinfo", meshtastic_PortNum_NEIGHBORINFO_APP, &meshtastic_NeighborInfo_msg),
+      concurrency::OSThread("NeighborInfoModule"), neighbors(neighborState.neighbors),
+      numNeighbors(&neighborState.neighbors_count)
 {
     ourPortNum = meshtastic_PortNum_NEIGHBORINFO_APP;
 
@@ -120,7 +120,7 @@ Assumes that the neighborInfo packet has been allocated
 */
 uint32_t NeighborInfoModule::collectNeighborInfo(meshtastic_NeighborInfo *neighborInfo)
 {
-    int my_node_id = nodeDB.getNodeNum();
+    uint my_node_id = nodeDB.getNodeNum();
     neighborInfo->node_id = my_node_id;
     neighborInfo->last_sent_by_id = my_node_id;
     neighborInfo->node_broadcast_interval_secs = moduleConfig.neighbor_info.update_interval;
