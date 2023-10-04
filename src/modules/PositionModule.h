@@ -46,6 +46,18 @@ class PositionModule : public ProtobufModule<meshtastic_Position>, private concu
 
     /** Does our periodic broadcast */
     virtual int32_t runOnce() override;
+
+  private:
+    struct SmartPosition getDistanceTraveledSinceLastSend(meshtastic_PositionLite currentPosition);
+
+    /** Only used in power saving trackers for now */
+    void clearPosition();
+};
+
+struct SmartPosition {
+    float distanceTraveled;
+    uint32_t distanceThreshold;
+    bool hasTraveledOverThreshold;
 };
 
 extern PositionModule *positionModule;
