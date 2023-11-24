@@ -57,8 +57,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define REQUIRE_RADIO true // If true, we will fail to start if the radio is not found
 
 /// Convert a preprocessor name into a quoted string
-#define xstr(s) str(s)
-#define str(s) #s
+#define xstr(s) ystr(s)
+#define ystr(s) #s
 
 /// Convert a preprocessor name into a quoted string and if that string is empty use "unset"
 #define optstr(s) (xstr(s)[0] ? xstr(s) : "unset")
@@ -187,6 +187,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #endif
 #ifndef HAS_TELEMETRY
 #define HAS_TELEMETRY 0
+#endif
+#ifndef HAS_SENSOR
+#define HAS_SENSOR 0
 #endif
 #ifndef HAS_RADIO
 #define HAS_RADIO 0
