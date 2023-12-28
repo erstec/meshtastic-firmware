@@ -188,6 +188,13 @@ bool AdminModule::handleReceivedProtobuf(const meshtastic_MeshPacket &mp, meshta
         reboot(DEFAULT_REBOOT_SECONDS);
         break;
     }
+    case meshtastic_AdminMessage_enter_dfu_mode_request_tag: {
+        LOG_INFO("Client is requesting to enter DFU mode.\n");
+#ifdef ARCH_NRF52
+        enterDfuMode();
+#endif
+        break;
+    }
 #ifdef ARCH_PORTDUINO
     case meshtastic_AdminMessage_exit_simulator_tag:
         LOG_INFO("Exiting simulator\n");
@@ -389,6 +396,11 @@ void AdminModule::handleSetModuleConfig(const meshtastic_ModuleConfig &c)
         moduleConfig.has_ambient_lighting = true;
         moduleConfig.ambient_lighting = c.payload_variant.ambient_lighting;
         break;
+    case meshtastic_ModuleConfig_paxcounter_tag:
+        LOG_INFO("Setting module config: Paxcounter\n");
+        moduleConfig.has_paxcounter = true;
+        moduleConfig.paxcounter = c.payload_variant.paxcounter;
+        break;
     }
 
     saveChanges(SEGMENT_MODULECONFIG);
@@ -538,6 +550,11 @@ void AdminModule::handleGetModuleConfig(const meshtastic_MeshPacket &req, const 
             LOG_INFO("Getting module config: Ambient Lighting\n");
             res.get_module_config_response.which_payload_variant = meshtastic_ModuleConfig_ambient_lighting_tag;
             res.get_module_config_response.payload_variant.ambient_lighting = moduleConfig.ambient_lighting;
+            break;
+        case meshtastic_AdminMessage_ModuleConfigType_PAXCOUNTER_CONFIG:
+            LOG_INFO("Getting module config: Paxcounter\n");
+            res.get_module_config_response.which_payload_variant = meshtastic_ModuleConfig_paxcounter_tag;
+            res.get_module_config_response.payload_variant.paxcounter = moduleConfig.paxcounter;
             break;
         }
 
