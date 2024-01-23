@@ -27,7 +27,7 @@
 #include <nvs_flash.h>
 #endif
 
-#ifdef ARCH_RASPBERRY_PI
+#ifdef ARCH_PORTDUINO
 #include "platform/portduino/PortduinoGlue.h"
 #endif
 
@@ -173,6 +173,7 @@ void NodeDB::installDefaultConfig()
     config.lora.region = meshtastic_Config_LoRaConfig_RegionCode_UNSET;
     config.lora.modem_preset = meshtastic_Config_LoRaConfig_ModemPreset_LONG_FAST;
     config.lora.hop_limit = HOP_RELIABLE;
+    config.lora.ignore_mqtt = false;
 #ifdef PIN_GPS_EN
     config.position.gps_en_gpio = PIN_GPS_EN;
 #endif
@@ -195,7 +196,7 @@ void NodeDB::installDefaultConfig()
     config.bluetooth.fixed_pin = defaultBLEPin;
 #if defined(ST7735_CS) || defined(USE_EINK) || defined(ILI9341_DRIVER) || defined(ST7789_CS)
     bool hasScreen = true;
-#elif ARCH_RASPBERRY_PI
+#elif ARCH_PORTDUINO
     bool hasScreen = false;
     if (settingsMap[displayPanel])
         hasScreen = true;
@@ -464,11 +465,8 @@ void NodeDB::init()
  */
 void NodeDB::pickNewNodeNum()
 {
-#ifdef ARCH_RASPBERRY_PI
-    getPiMacAddr(ourMacAddr); // Make sure ourMacAddr is set
-#else
+
     getMacAddr(ourMacAddr); // Make sure ourMacAddr is set
-#endif
 
     // Pick an initial nodenum based on the macaddr
     NodeNum nodeNum = (ourMacAddr[2] << 24) | (ourMacAddr[3] << 16) | (ourMacAddr[4] << 8) | ourMacAddr[5];
@@ -799,22 +797,25 @@ void NodeDB::updateTelemetry(uint32_t nodeId, const meshtastic_Telemetry &t, RxS
     notifyObservers(true); // Force an update whether or not our node counts have changed
 }
 
-/** Update user info for this node based on received user data
+/** Update user info and channel for this node based on received user data
  */
-bool NodeDB::updateUser(uint32_t nodeId, const meshtastic_User &p)
+bool NodeDB::updateUser(uint32_t nodeId, const meshtastic_User &p, uint8_t channelIndex)
 {
     meshtastic_NodeInfoLite *info = getOrCreateMeshNode(nodeId);
     if (!info) {
         return false;
     }
 
-    LOG_DEBUG("old user %s/%s/%s\n", info->user.id, info->user.long_name, info->user.short_name);
+    LOG_DEBUG("old user %s/%s/%s, channel=%d\n", info->user.id, info->user.long_name, info->user.short_name, info->channel);
 
-    bool changed = memcmp(&info->user, &p,
-                          sizeof(info->user)); // Both of these blocks start as filled with zero so I think this is okay
+    // Both of info->user and p start as filled with zero so I think this is okay
+    bool changed = memcmp(&info->user, &p, sizeof(info->user)) || (info->channel != channelIndex);
 
     info->user = p;
-    LOG_DEBUG("updating changed=%d user %s/%s/%s\n", changed, info->user.id, info->user.long_name, info->user.short_name);
+    if (nodeId != getNodeNum())
+        info->channel = channelIndex; // Set channel we need to use to reach this node (but don't set our own channel)
+    LOG_DEBUG("updating changed=%d user %s/%s/%s, channel=%d\n", changed, info->user.id, info->user.long_name,
+              info->user.short_name, info->channel);
     info->has_user = true;
 
     if (changed) {
@@ -834,7 +835,7 @@ bool NodeDB::updateUser(uint32_t nodeId, const meshtastic_User &p)
 void NodeDB::updateFrom(const meshtastic_MeshPacket &mp)
 {
     if (mp.which_payload_variant == meshtastic_MeshPacket_decoded_tag && mp.from) {
-        LOG_DEBUG("Update DB node 0x%x, rx_time=%u, channel=%d\n", mp.from, mp.rx_time, mp.channel);
+        LOG_DEBUG("Update DB node 0x%x, rx_time=%u\n", mp.from, mp.rx_time);
 
         meshtastic_NodeInfoLite *info = getOrCreateMeshNode(getFrom(&mp));
         if (!info) {
@@ -846,10 +847,6 @@ void NodeDB::updateFrom(const meshtastic_MeshPacket &mp)
 
         if (mp.rx_snr)
             info->snr = mp.rx_snr; // keep the most recent SNR we received for this node.
-
-        if (mp.decoded.portnum == meshtastic_PortNum_NODEINFO_APP) {
-            info->channel = mp.channel;
-        }
     }
 }
 
