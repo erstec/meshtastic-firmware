@@ -248,6 +248,11 @@ void setup()
     digitalWrite(PIN_EINK_PWR_ON, HIGH);
 #endif
 
+#if defined(LORA_TCXO_GPIO)
+    pinMode(LORA_TCXO_GPIO, OUTPUT);
+    digitalWrite(LORA_TCXO_GPIO, HIGH);
+#endif
+
 #ifdef ST7735_BL_V03 // Heltec Wireless Tracker PCB Change Detect/Hack
 
     rtc_clk_32k_enable(true);
@@ -363,6 +368,13 @@ void setup()
     Wire.begin();
 #elif defined(I2C_SDA) && !defined(ARCH_RP2040)
     Wire.begin(I2C_SDA, I2C_SCL);
+#elif defined(ARCH_PORTDUINO)
+    if (settingsStrings[i2cdev] != "") {
+        LOG_INFO("Using %s as I2C device.\n", settingsStrings[i2cdev]);
+        Wire.begin(settingsStrings[i2cdev].c_str());
+    } else {
+        LOG_INFO("No I2C device configured, skipping.\n");
+    }
 #elif HAS_WIRE
     Wire.begin();
 #endif
@@ -408,8 +420,9 @@ void setup()
     // We need to scan here to decide if we have a screen for nodeDB.init() and because power has been applied to
     // accessories
     auto i2cScanner = std::unique_ptr<ScanI2CTwoWire>(new ScanI2CTwoWire());
-
+#ifdef HAS_WIRE
     LOG_INFO("Scanning for i2c devices...\n");
+#endif
 
 #if defined(I2C_SDA1) && defined(ARCH_RP2040)
     Wire1.setSDA(I2C_SDA1);
@@ -429,6 +442,11 @@ void setup()
 #elif defined(I2C_SDA) && !defined(ARCH_RP2040)
     Wire.begin(I2C_SDA, I2C_SCL);
     i2cScanner->scanPort(ScanI2C::I2CPort::WIRE);
+#elif defined(ARCH_PORTDUINO)
+    if (settingsStrings[i2cdev] != "") {
+        LOG_INFO("Scanning for i2c devices...\n");
+        i2cScanner->scanPort(ScanI2C::I2CPort::WIRE);
+    }
 #elif HAS_WIRE
     i2cScanner->scanPort(ScanI2C::I2CPort::WIRE);
 #endif
@@ -719,6 +737,7 @@ void setup()
 #ifdef ARCH_PORTDUINO
     if (settingsMap[use_sx1262]) {
         if (!rIf) {
+            LOG_DEBUG("Attempting to activate sx1262 radio on SPI port %s\n", settingsStrings[spidev].c_str());
             LockingArduinoHal *RadioLibHAL = new LockingArduinoHal(SPI, spiSettings);
             rIf = new SX1262Interface((LockingArduinoHal *)RadioLibHAL, settingsMap[cs], settingsMap[irq], settingsMap[reset],
                                       settingsMap[busy]);
@@ -732,6 +751,7 @@ void setup()
         }
     } else if (settingsMap[use_rf95]) {
         if (!rIf) {
+            LOG_DEBUG("Attempting to activate rf95 radio on SPI port %s\n", settingsStrings[spidev].c_str());
             LockingArduinoHal *RadioLibHAL = new LockingArduinoHal(SPI, spiSettings);
             rIf = new RF95Interface((LockingArduinoHal *)RadioLibHAL, settingsMap[cs], settingsMap[irq], settingsMap[reset],
                                     settingsMap[busy]);
@@ -746,6 +766,7 @@ void setup()
         }
     } else if (settingsMap[use_sx1280]) {
         if (!rIf) {
+            LOG_DEBUG("Attempting to activate sx1280 radio on SPI port %s\n", settingsStrings[spidev].c_str());
             LockingArduinoHal *RadioLibHAL = new LockingArduinoHal(SPI, spiSettings);
             rIf = new SX1280Interface((LockingArduinoHal *)RadioLibHAL, settingsMap[cs], settingsMap[irq], settingsMap[reset],
                                       settingsMap[busy]);
